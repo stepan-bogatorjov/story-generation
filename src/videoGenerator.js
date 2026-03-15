@@ -58,6 +58,7 @@ export async function generateVideos(config, story, imagePaths, runway) {
         promptImage: imageDataUri,
         promptText: scene.prompt,
         duration: scene.duration,
+        ratio: config.VIDEO_RATIO,
       });
 
       // Poll for task completion.

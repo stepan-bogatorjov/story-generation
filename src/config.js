@@ -33,6 +33,7 @@ export function loadConfig(overrides = {}) {
     OPENAI_MODEL: "gpt-5.4",
     OPENAI_IMAGE_MODEL: "gpt-image-1.5",
     RUNWAY_MODEL: "gen4.5",
+    VIDEO_RATIO: "720:1280",
 
     // -- Directory paths -----------------------------------------------------
     INPUT_DIR: path.join(ROOT_DIR, "input"),
