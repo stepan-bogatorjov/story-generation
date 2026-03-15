@@ -1,0 +1,82 @@
+/**
+ * validator.js
+ *
+ * Validates the structured JSON story returned by the LLM.
+ * Even though OpenAI Structured Outputs enforce a schema server-side,
+ * we perform local validation as an additional safety net before
+ * handing data to the image/video generation stages.
+ */
+
+import fs from "fs/promises";
+import path from "path";
+
+/**
+ * Validates a parsed story object against the expected schema.
+ *
+ * Checks performed:
+ *  1. Top-level object has a "title" string and "scenes" array.
+ *  2. scenes.length === expectedSceneCount.
+ *  3. Scene numbers start at 1 and are sequential.
+ *  4. Every scene has a non-empty "prompt" string.
+ *  5. Every scene has a numeric "duration".
+ *
+ * @param {object} story - Parsed story JSON.
+ * @param {number} expectedSceneCount - Required number of scenes.
+ * @returns {{ valid: boolean, errors: string[] }}
+ */
+export function validateStory(story, expectedSceneCount) {
+  const errors = [];
+
+  // 1. Top-level structure
+  if (!story || typeof story !== "object") {
+    return { valid: false, errors: ["Story must be a non-null object"] };
+  }
+  if (typeof story.title !== "string" || story.title.trim() === "") {
+    errors.push("Missing or empty 'title' field");
+  }
+  if (!Array.isArray(story.scenes)) {
+    errors.push("Missing 'scenes' array");
+    // Cannot continue further checks without an array.
+    return { valid: false, errors };
+  }
+
+  // 2. Scene count
+  if (story.scenes.length !== expectedSceneCount) {
+    errors.push(
+      `Expected ${expectedSceneCount} scenes, got ${story.scenes.length}`
+    );
+  }
+
+  // 3–5. Per-scene checks
+  story.scenes.forEach((scene, index) => {
+    const expectedNumber = index + 1;
+
+    if (scene.scene !== expectedNumber) {
+      errors.push(
+        `Scene at index ${index}: expected scene number ${expectedNumber}, got ${scene.scene}`
+      );
+    }
+    if (typeof scene.prompt !== "string" || scene.prompt.trim() === "") {
+      errors.push(`Scene ${expectedNumber}: prompt is missing or empty`);
+    }
+    if (typeof scene.duration !== "number") {
+      errors.push(`Scene ${expectedNumber}: duration must be a number`);
+    }
+  });
+
+  return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Saves the raw LLM response to disk for debugging when validation fails.
+ *
+ * @param {string} outputDir - Directory to write the debug file into.
+ * @param {string} rawResponse - Raw text from the LLM.
+ * @returns {Promise<string>} Path to the saved debug file.
+ */
+export async function saveRawResponse(outputDir, rawResponse) {
+  await fs.mkdir(outputDir, { recursive: true });
+  const debugPath = path.join(outputDir, "debug-raw-response.json");
+  await fs.writeFile(debugPath, rawResponse, "utf-8");
+  return debugPath;
+}

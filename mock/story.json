@@ -1,0 +1,40 @@
+{
+  "title": "Alone in the Frozen Wild",
+  "scenes": [
+    {
+      "scene": 1,
+      "prompt": "A lone survivalist stands at the edge of a frozen lake at dawn, breath visible in the frigid air. He wears a heavy wool coat, thick beard frosted white, carrying a worn leather rucksack. Snow-covered pine trees stretch to the horizon under a pale orange sky. Cinematic wide shot, natural lighting, hyper-realistic.",
+      "duration": 4
+    },
+    {
+      "scene": 2,
+      "prompt": "The survivalist kneels beside a small campfire in a dense forest clearing, carefully feeding dry branches into the flames. Smoke curls upward through the canopy. Close-up on weathered hands and the warm glow of the fire against the cold blue forest. Cinematic medium shot, firelight, shallow depth of field.",
+      "duration": 4
+    },
+    {
+      "scene": 3,
+      "prompt": "The survivalist cautiously crosses a narrow fallen log over a rushing icy river. Water churns violently below. He grips a walking stick for balance, face set with concentration. Snow falls lightly. Cinematic side angle, motion blur on water, dramatic tension.",
+      "duration": 4
+    },
+    {
+      "scene": 4,
+      "prompt": "Inside a makeshift lean-to shelter, the survivalist examines a hand-drawn map by candlelight. Shadows dance on rough bark walls. His equipment is neatly arranged: a knife, rope, compass, and dried meat. Cinematic close-up, warm candlelight, intimate atmosphere.",
+      "duration": 4
+    },
+    {
+      "scene": 5,
+      "prompt": "The survivalist tracks animal footprints through deep snow in a silent white forest. He moves low and quiet, scanning the treeline. A distant mountain looms behind clouds. Cinematic tracking shot, muted color palette, suspenseful mood.",
+      "duration": 4
+    },
+    {
+      "scene": 6,
+      "prompt": "A sudden blizzard engulfs the survivalist as he struggles uphill through waist-deep snow. Wind whips his coat, visibility near zero. He shields his face with one arm, pressing forward. Cinematic wide shot, heavy particle effects, desaturated tones, raw survival energy.",
+      "duration": 4
+    },
+    {
+      "scene": 7,
+      "prompt": "The survivalist reaches a mountain summit at golden hour. He stands silhouetted against a vast wilderness panorama, arms at his sides, breathing hard. The storm has cleared. Warm golden light floods the scene. Cinematic hero shot, epic scale, triumphant atmosphere.",
+      "duration": 4
+    }
+  ]
+}

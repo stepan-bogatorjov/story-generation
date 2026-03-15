@@ -1,0 +1,9 @@
+node_modules/
+output/
+.env
+*.log
+.idea/
+*.iml
+.claude/
+CLAUDE.md
+input/
