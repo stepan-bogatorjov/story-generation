@@ -27,7 +27,7 @@ export async function runPipeline(config, deps = {}) {
   console.log("=== Pipeline started ===");
   console.log(`  MOCK_MODE:       ${config.MOCK_MODE}`);
   console.log(`  PRODUCTION_MODE: ${config.PRODUCTION_MODE}`);
-  console.log(`  SCENE_COUNT:     ${config.SCENE_COUNT}`);
+  console.log(`  TARGET_DURATION: ${config.TARGET_DURATION}s`);
 
   // Safety guard: real API calls require PRODUCTION_MODE to be explicitly true.
   if (!config.MOCK_MODE && !config.PRODUCTION_MODE) {

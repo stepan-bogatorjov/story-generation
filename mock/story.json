@@ -3,38 +3,48 @@
   "scenes": [
     {
       "scene": 1,
-      "prompt": "A lone survivalist stands at the edge of a frozen lake at dawn, breath visible in the frigid air. He wears a heavy wool coat, thick beard frosted white, carrying a worn leather rucksack. Snow-covered pine trees stretch to the horizon under a pale orange sky. Cinematic wide shot, natural lighting, hyper-realistic.",
-      "duration": 4
+      "prompt": "ultra realistic cinematic winter survival scene in Siberian taiga, cold storm atmosphere, dramatic lighting, snow flying in air, same character as reference image: rugged bearded Siberian survivalist, thick frosted beard, grey ushanka hat, heavy brown shearling winter coat, leather belt, brown gloves, tall winter boots, large backpack, holding axe, realistic face, cinematic realism, natural skin texture, vertical composition, dynamic camera movement, no background music, natural environmental sounds only — A lone survivalist stands at the edge of a frozen lake at dawn, breath visible in the frigid air. Snow-covered pine trees stretch to the horizon under a pale orange sky. Camera slowly pushes in from wide establishing shot. Sounds: wind howling across the ice, snow crunching underfoot.",
+      "duration": 8
     },
     {
       "scene": 2,
-      "prompt": "The survivalist kneels beside a small campfire in a dense forest clearing, carefully feeding dry branches into the flames. Smoke curls upward through the canopy. Close-up on weathered hands and the warm glow of the fire against the cold blue forest. Cinematic medium shot, firelight, shallow depth of field.",
-      "duration": 4
+      "prompt": "ultra realistic cinematic winter survival scene in Siberian taiga, cold storm atmosphere, dramatic lighting, snow flying in air, same character as reference image: rugged bearded Siberian survivalist, thick frosted beard, grey ushanka hat, heavy brown shearling winter coat, leather belt, brown gloves, tall winter boots, large backpack, holding axe, realistic face, cinematic realism, natural skin texture, vertical composition, dynamic camera movement, no background music, natural environmental sounds only — The survivalist sprints across the frozen lake toward a dark shape half-buried in snow on the far shore. Camera tracks behind him at speed, ice groaning beneath his boots. Sounds: boots pounding ice, cracking echoes, heavy breathing.",
+      "duration": 7
     },
     {
       "scene": 3,
-      "prompt": "The survivalist cautiously crosses a narrow fallen log over a rushing icy river. Water churns violently below. He grips a walking stick for balance, face set with concentration. Snow falls lightly. Cinematic side angle, motion blur on water, dramatic tension.",
-      "duration": 4
+      "prompt": "ultra realistic cinematic winter survival scene in Siberian taiga, cold storm atmosphere, dramatic lighting, snow flying in air, same character as reference image: rugged bearded Siberian survivalist, thick frosted beard, grey ushanka hat, heavy brown shearling winter coat, leather belt, brown gloves, tall winter boots, large backpack, holding axe, realistic face, cinematic realism, natural skin texture, vertical composition, dynamic camera movement, no background music, natural environmental sounds only — The ice cracks violently beneath the survivalist mid-stride and his left leg plunges through into freezing black water. Camera drops low, handheld shake, water exploding upward. Sounds: ice shattering, water splashing, gasping breath.",
+      "duration": 6
     },
     {
       "scene": 4,
-      "prompt": "Inside a makeshift lean-to shelter, the survivalist examines a hand-drawn map by candlelight. Shadows dance on rough bark walls. His equipment is neatly arranged: a knife, rope, compass, and dried meat. Cinematic close-up, warm candlelight, intimate atmosphere.",
-      "duration": 4
+      "prompt": "ultra realistic cinematic winter survival scene in Siberian taiga, cold storm atmosphere, dramatic lighting, snow flying in air, same character as reference image: rugged bearded Siberian survivalist, thick frosted beard, grey ushanka hat, heavy brown shearling winter coat, leather belt, brown gloves, tall winter boots, large backpack, holding axe, realistic face, cinematic realism, natural skin texture, vertical composition, dynamic camera movement, no background music, natural environmental sounds only — He claws himself out of the hole, soaked from the waist down, rolling away from the cracking edge. Camera follows in close tracking shot as cracks spider-web across the surface. Sounds: ice fracturing, wet fabric dragging, desperate grunting.",
+      "duration": 8
     },
     {
       "scene": 5,
-      "prompt": "The survivalist tracks animal footprints through deep snow in a silent white forest. He moves low and quiet, scanning the treeline. A distant mountain looms behind clouds. Cinematic tracking shot, muted color palette, suspenseful mood.",
-      "duration": 4
+      "prompt": "ultra realistic cinematic winter survival scene in Siberian taiga, cold storm atmosphere, dramatic lighting, snow flying in air, same character as reference image: rugged bearded Siberian survivalist, thick frosted beard, grey ushanka hat, heavy brown shearling winter coat, leather belt, brown gloves, tall winter boots, large backpack, holding axe, realistic face, cinematic realism, natural skin texture, vertical composition, dynamic camera movement, no background music, natural environmental sounds only — Shivering violently, the survivalist reaches the shoreline and hacks at a dead birch tree with his axe, splitting off dry bark for kindling. Camera close-up on trembling hands and the axe blade biting wood. Sounds: axe impacts, wood splintering, teeth chattering.",
+      "duration": 8
     },
     {
       "scene": 6,
-      "prompt": "A sudden blizzard engulfs the survivalist as he struggles uphill through waist-deep snow. Wind whips his coat, visibility near zero. He shields his face with one arm, pressing forward. Cinematic wide shot, heavy particle effects, desaturated tones, raw survival energy.",
-      "duration": 4
+      "prompt": "ultra realistic cinematic winter survival scene in Siberian taiga, cold storm atmosphere, dramatic lighting, snow flying in air, same character as reference image: rugged bearded Siberian survivalist, thick frosted beard, grey ushanka hat, heavy brown shearling winter coat, leather belt, brown gloves, tall winter boots, large backpack, holding axe, realistic face, cinematic realism, natural skin texture, vertical composition, dynamic camera movement, no background music, natural environmental sounds only — He strikes a ferro rod and sparks catch the birch bark tinder. A small flame erupts, but a sudden gust of wind sends embers flying into nearby dry pine branches which ignite instantly. Camera pulls back as flames surge upward. Sounds: fire crackling, wind roaring, branches igniting.",
+      "duration": 7
     },
     {
       "scene": 7,
-      "prompt": "The survivalist reaches a mountain summit at golden hour. He stands silhouetted against a vast wilderness panorama, arms at his sides, breathing hard. The storm has cleared. Warm golden light floods the scene. Cinematic hero shot, epic scale, triumphant atmosphere.",
-      "duration": 4
+      "prompt": "ultra realistic cinematic winter survival scene in Siberian taiga, cold storm atmosphere, dramatic lighting, snow flying in air, same character as reference image: rugged bearded Siberian survivalist, thick frosted beard, grey ushanka hat, heavy brown shearling winter coat, leather belt, brown gloves, tall winter boots, large backpack, holding axe, realistic face, cinematic realism, natural skin texture, vertical composition, dynamic camera movement, no background music, natural environmental sounds only — The survivalist grabs his gear and scrambles uphill through deep snow as the fire spreads rapidly behind him, orange glow illuminating the snowstorm. Camera follows in fast lateral tracking shot. Sounds: fire roaring, snow crunching, heavy breathing, fabric rustling.",
+      "duration": 6
+    },
+    {
+      "scene": 8,
+      "prompt": "ultra realistic cinematic winter survival scene in Siberian taiga, cold storm atmosphere, dramatic lighting, snow flying in air, same character as reference image: rugged bearded Siberian survivalist, thick frosted beard, grey ushanka hat, heavy brown shearling winter coat, leather belt, brown gloves, tall winter boots, large backpack, holding axe, realistic face, cinematic realism, natural skin texture, vertical composition, dynamic camera movement, no background music, natural environmental sounds only — He slips on an icy slope and tumbles downhill, crashing into the half-buried dark shape — a frozen supply crate. His axe flies from his grip. Close impact shot, camera shakes on collision. Sounds: body impact, snow compacting, metal scraping, axe clattering.",
+      "duration": 5
+    },
+    {
+      "scene": 9,
+      "prompt": "ultra realistic cinematic winter survival scene in Siberian taiga, cold storm atmosphere, dramatic lighting, snow flying in air, same character as reference image: rugged bearded Siberian survivalist, thick frosted beard, grey ushanka hat, heavy brown shearling winter coat, leather belt, brown gloves, tall winter boots, large backpack, holding axe, realistic face, cinematic realism, natural skin texture, vertical composition, dynamic camera movement, no background music, natural environmental sounds only — Exhausted and shaking, the survivalist retrieves his axe and hammers the frozen crate latch open. Inside: a thermal blanket, flares, and rations. He wraps the blanket around himself and fires a flare into the grey sky. Camera tilts upward following the red streak. Sounds: metal breaking, flare hissing, wind dying down, heavy exhale of relief.",
+      "duration": 5
     }
   ]
 }

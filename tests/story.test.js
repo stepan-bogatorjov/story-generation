@@ -1,8 +1,7 @@
 /**
  * story.test.js
  *
- * Tests for config loading, prompt loading, story generation (mock mode),
- * and image/video mock generation.
+ * Tests for config loading, prompt loading, and story generation (mock mode).
  */
 
 import { describe, it, expect } from "vitest";
@@ -17,12 +16,14 @@ describe("loadConfig", () => {
     const config = loadConfig();
     expect(config.MOCK_MODE).toBe(true);
     expect(config.PRODUCTION_MODE).toBe(false);
-    expect(config.SCENE_COUNT).toBe(7);
+    expect(config.MIN_SCENES).toBe(5);
+    expect(config.MAX_SCENES).toBe(15);
+    expect(config.TARGET_DURATION).toBe(60);
   });
 
   it("accepts overrides", () => {
-    const config = loadConfig({ SCENE_COUNT: 3, MOCK_MODE: false });
-    expect(config.SCENE_COUNT).toBe(3);
+    const config = loadConfig({ MIN_SCENES: 3, MOCK_MODE: false });
+    expect(config.MIN_SCENES).toBe(3);
     expect(config.MOCK_MODE).toBe(false);
   });
 
@@ -54,9 +55,9 @@ describe("generateStory (mock mode)", () => {
     const config = loadConfig();
     const story = await generateStory(config);
     expect(story.title).toBeTruthy();
-    expect(story.scenes).toHaveLength(7);
+    expect(story.scenes.length).toBeGreaterThanOrEqual(config.MIN_SCENES);
+    expect(story.scenes.length).toBeLessThanOrEqual(config.MAX_SCENES);
     expect(story.scenes[0].scene).toBe(1);
-    expect(story.scenes[6].scene).toBe(7);
   });
 
   it("saves story to output directory", async () => {

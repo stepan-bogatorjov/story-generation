@@ -27,7 +27,11 @@ export function loadConfig(overrides = {}) {
     PRODUCTION_MODE: false,
 
     // -- Story settings ------------------------------------------------------
-    SCENE_COUNT: 7,
+    // Scene count is determined dynamically by the LLM based on pacing.
+    // These bounds are used for local validation only.
+    MIN_SCENES: 5,
+    MAX_SCENES: 15,
+    TARGET_DURATION: 60,
 
     // -- Model identifiers ---------------------------------------------------
     OPENAI_MODEL: "gpt-5.4",

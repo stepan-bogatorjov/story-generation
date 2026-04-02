@@ -5,6 +5,10 @@
  * Even though OpenAI Structured Outputs enforce a schema server-side,
  * we perform local validation as an additional safety net before
  * handing data to the image/video generation stages.
+ *
+ * Scene count is dynamic (the LLM chooses it based on pacing),
+ * so we validate against a reasonable range and check that total
+ * duration is approximately TARGET_DURATION seconds.
  */
 
 import fs from "fs/promises";
@@ -15,16 +19,21 @@ import path from "path";
  *
  * Checks performed:
  *  1. Top-level object has a "title" string and "scenes" array.
- *  2. scenes.length === expectedSceneCount.
+ *  2. Scene count falls within [minScenes, maxScenes].
  *  3. Scene numbers start at 1 and are sequential.
  *  4. Every scene has a non-empty "prompt" string.
  *  5. Every scene has a numeric "duration".
+ *  6. Total duration is approximately targetDuration (±20%).
  *
  * @param {object} story - Parsed story JSON.
- * @param {number} expectedSceneCount - Required number of scenes.
+ * @param {object} opts  - Validation options.
+ * @param {number} opts.minScenes      - Minimum allowed scene count.
+ * @param {number} opts.maxScenes      - Maximum allowed scene count.
+ * @param {number} opts.targetDuration - Expected total duration in seconds.
  * @returns {{ valid: boolean, errors: string[] }}
  */
-export function validateStory(story, expectedSceneCount) {
+export function validateStory(story, opts = {}) {
+  const { minScenes = 5, maxScenes = 15, targetDuration = 60 } = opts;
   const errors = [];
 
   // 1. Top-level structure
@@ -36,18 +45,18 @@ export function validateStory(story, expectedSceneCount) {
   }
   if (!Array.isArray(story.scenes)) {
     errors.push("Missing 'scenes' array");
-    // Cannot continue further checks without an array.
     return { valid: false, errors };
   }
 
-  // 2. Scene count
-  if (story.scenes.length !== expectedSceneCount) {
+  // 2. Scene count range
+  if (story.scenes.length < minScenes || story.scenes.length > maxScenes) {
     errors.push(
-      `Expected ${expectedSceneCount} scenes, got ${story.scenes.length}`
+      `Expected between ${minScenes} and ${maxScenes} scenes, got ${story.scenes.length}`
     );
   }
 
   // 3–5. Per-scene checks
+  let totalDuration = 0;
   story.scenes.forEach((scene, index) => {
     const expectedNumber = index + 1;
 
@@ -61,8 +70,22 @@ export function validateStory(story, expectedSceneCount) {
     }
     if (typeof scene.duration !== "number") {
       errors.push(`Scene ${expectedNumber}: duration must be a number`);
+    } else {
+      totalDuration += scene.duration;
     }
   });
+
+  // 6. Total duration check (allow ±20% tolerance)
+  const tolerance = targetDuration * 0.2;
+  if (
+    totalDuration < targetDuration - tolerance ||
+    totalDuration > targetDuration + tolerance
+  ) {
+    errors.push(
+      `Total duration ${totalDuration}s is outside the acceptable range ` +
+        `(${targetDuration - tolerance}–${targetDuration + tolerance}s, target ${targetDuration}s)`
+    );
+  }
 
   return { valid: errors.length === 0, errors };
 }

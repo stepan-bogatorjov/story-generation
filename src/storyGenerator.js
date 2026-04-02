@@ -6,6 +6,10 @@
  *
  * The LLM is called with OpenAI Structured Outputs (response_format)
  * so the response is guaranteed to conform to a strict JSON schema.
+ *
+ * Scene count is determined dynamically by the LLM based on pacing
+ * and a ~60-second target duration. The schema enforces the shape
+ * of each scene but not the array length.
  */
 
 import fs from "fs/promises";
@@ -18,12 +22,12 @@ import { validateStory, saveRawResponse } from "./validator.js";
 
 /**
  * Builds the JSON schema definition passed to response_format.
+ * The schema enforces the shape of the story object but does NOT
+ * constrain the number of scenes — the LLM decides that dynamically.
  *
- * @param {number} sceneCount - The required number of scenes
- *   (used in the description only; enforcement is done locally).
  * @returns {object} OpenAI response_format parameter value.
  */
-function buildResponseFormat(sceneCount) {
+function buildResponseFormat() {
   return {
     type: "json_schema",
     json_schema: {
@@ -38,7 +42,8 @@ function buildResponseFormat(sceneCount) {
           },
           scenes: {
             type: "array",
-            description: `Exactly ${sceneCount} cinematic scenes`,
+            description:
+              "Dynamic number of cinematic scenes totalling ~60 seconds",
             items: {
               type: "object",
               properties: {
@@ -108,10 +113,14 @@ export async function generateStory(config, openai) {
         { role: "system", content: systemPrompt },
         {
           role: "user",
-          content: `Generate a cinematic survival story with exactly ${config.SCENE_COUNT} scenes. Each scene must have a sequential scene number starting from 1, a full cinematic visual prompt, and a duration in seconds.`,
+          content:
+            "Generate a cinematic survival story. Determine the number of scenes dynamically " +
+            "based on pacing and action density. The total duration of all scenes must be " +
+            "approximately 60 seconds. Each scene must have a sequential scene number starting " +
+            "from 1, a full cinematic visual prompt, and a duration in seconds.",
         },
       ],
-      response_format: buildResponseFormat(config.SCENE_COUNT),
+      response_format: buildResponseFormat(),
     });
 
     const rawContent = response.choices[0].message.content;
@@ -128,7 +137,11 @@ export async function generateStory(config, openai) {
   }
 
   // -- Local validation (runs in both modes) --------------------------------
-  const { valid, errors } = validateStory(story, config.SCENE_COUNT);
+  const { valid, errors } = validateStory(story, {
+    minScenes: config.MIN_SCENES,
+    maxScenes: config.MAX_SCENES,
+    targetDuration: config.TARGET_DURATION,
+  });
 
   if (!valid) {
     const debugPath = await saveRawResponse(
@@ -145,6 +158,10 @@ export async function generateStory(config, openai) {
   await fs.mkdir(config.OUTPUT_DIR, { recursive: true });
   await fs.writeFile(outputPath, JSON.stringify(story, null, 2), "utf-8");
   console.log(`[story] Story saved to ${outputPath}`);
+  console.log(`[story] Scene count: ${story.scenes.length}`);
+  console.log(
+    `[story] Total duration: ${story.scenes.reduce((s, sc) => s + sc.duration, 0)}s`
+  );
   console.log("[story] Step completed.");
 
   return story;

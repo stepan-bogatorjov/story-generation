@@ -13,7 +13,7 @@ import { runPipeline } from "../src/pipeline.js";
 import { generateImages } from "../src/imageGenerator.js";
 import { generateVideos } from "../src/videoGenerator.js";
 
-// Use a temp output directory so tests don't pollute the real output/.
+// Use the real output directory; mock mode writes safe placeholder files.
 function testConfig(overrides = {}) {
   return loadConfig({
     OUTPUT_DIR: path.resolve("output"),
@@ -28,8 +28,8 @@ describe("pipeline — mock mode", () => {
     const result = await runPipeline(config);
 
     expect(result.story.title).toBeTruthy();
-    expect(result.imagePaths).toHaveLength(7);
-    expect(result.videoPaths).toHaveLength(7);
+    expect(result.imagePaths.length).toBe(result.story.scenes.length);
+    expect(result.videoPaths.length).toBe(result.story.scenes.length);
 
     // Verify files were created on disk.
     for (const p of [...result.imagePaths, ...result.videoPaths]) {
@@ -65,7 +65,7 @@ describe("imageGenerator — mock mode", () => {
       await fs.readFile(config.MOCK_STORY_PATH, "utf-8")
     );
     const paths = await generateImages(config, story);
-    expect(paths).toHaveLength(7);
+    expect(paths).toHaveLength(story.scenes.length);
     for (const p of paths) {
       expect(p).toMatch(/image\.png$/);
     }
@@ -78,7 +78,6 @@ describe("videoGenerator — mock mode", () => {
     const story = JSON.parse(
       await fs.readFile(config.MOCK_STORY_PATH, "utf-8")
     );
-    // Create dummy image paths (mock video generator doesn't read them).
     const imagePaths = story.scenes.map((s) =>
       path.join(
         config.SCENES_DIR,
@@ -87,7 +86,7 @@ describe("videoGenerator — mock mode", () => {
       )
     );
     const paths = await generateVideos(config, story, imagePaths);
-    expect(paths).toHaveLength(7);
+    expect(paths).toHaveLength(story.scenes.length);
     for (const p of paths) {
       expect(p).toMatch(/video\.mp4$/);
     }
