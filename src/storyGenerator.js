@@ -40,6 +40,18 @@ function buildResponseFormat() {
             type: "string",
             description: "Title of the survival story",
           },
+          viralTitle: {
+            type: "string",
+            description:
+              "Short, catchy, viral English title for social media (YouTube/TikTok/Reels). " +
+              "Must grab attention, create curiosity or urgency. Max 100 characters.",
+          },
+          description: {
+            type: "string",
+            description:
+              "Engaging English description for social media. " +
+              "Hook the viewer in the first line, include relevant hashtags. 2-4 sentences.",
+          },
           scenes: {
             type: "array",
             description:
@@ -66,7 +78,7 @@ function buildResponseFormat() {
             },
           },
         },
-        required: ["title", "scenes"],
+        required: ["title", "viralTitle", "description", "scenes"],
         additionalProperties: false,
       },
     },
@@ -117,7 +129,10 @@ export async function generateStory(config, openai) {
             "Generate a cinematic survival story. Determine the number of scenes dynamically " +
             "based on pacing and action density. The total duration of all scenes must be " +
             "approximately 60 seconds. Each scene must have a sequential scene number starting " +
-            "from 1, a full cinematic visual prompt, and a duration in seconds.",
+            "from 1, a full cinematic visual prompt, and a duration in seconds. " +
+            "Also provide a viral English title (viralTitle) — short, catchy, attention-grabbing " +
+            "for YouTube/TikTok/Reels (max 100 chars), and an engaging English description " +
+            "with a hook and relevant hashtags (2-4 sentences).",
         },
       ],
       response_format: buildResponseFormat(),

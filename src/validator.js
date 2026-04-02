@@ -43,6 +43,16 @@ export function validateStory(story, opts = {}) {
   if (typeof story.title !== "string" || story.title.trim() === "") {
     errors.push("Missing or empty 'title' field");
   }
+  if (typeof story.viralTitle !== "string" || story.viralTitle.trim() === "") {
+    errors.push("Missing or empty 'viralTitle' field");
+  } else if (story.viralTitle.length > 100) {
+    errors.push(
+      `'viralTitle' exceeds 100 characters (got ${story.viralTitle.length})`
+    );
+  }
+  if (typeof story.description !== "string" || story.description.trim() === "") {
+    errors.push("Missing or empty 'description' field");
+  }
   if (!Array.isArray(story.scenes)) {
     errors.push("Missing 'scenes' array");
     return { valid: false, errors };

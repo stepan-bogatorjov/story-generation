@@ -16,6 +16,8 @@ function validStory(sceneCount = 9, perSceneDuration = null) {
   const dur = perSceneDuration ?? 60 / sceneCount;
   return {
     title: "Test Story",
+    viralTitle: "You Won't Believe What Happened Next",
+    description: "An incredible survival story that will keep you on the edge of your seat. #survival #viral",
     scenes: Array.from({ length: sceneCount }, (_, i) => ({
       scene: i + 1,
       prompt: `Scene ${i + 1} prompt`,
@@ -52,8 +54,42 @@ describe("validateStory", () => {
     expect(result.valid).toBe(false);
   });
 
+  it("rejects missing viralTitle", () => {
+    const story = validStory(9);
+    delete story.viralTitle;
+    const result = validateStory(story, defaultOpts);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContainEqual(expect.stringMatching(/viralTitle/));
+  });
+
+  it("rejects viralTitle over 100 characters", () => {
+    const story = validStory(9);
+    story.viralTitle = "A".repeat(101);
+    const result = validateStory(story, defaultOpts);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContainEqual(expect.stringMatching(/exceeds 100 characters/));
+  });
+
+  it("rejects missing description", () => {
+    const story = validStory(9);
+    delete story.description;
+    const result = validateStory(story, defaultOpts);
+    expect(result.valid).toBe(false);
+    expect(result.errors).toContainEqual(expect.stringMatching(/description/));
+  });
+
+  it("rejects empty description", () => {
+    const story = validStory(9);
+    story.description = "   ";
+    const result = validateStory(story, defaultOpts);
+    expect(result.valid).toBe(false);
+  });
+
   it("rejects missing scenes array", () => {
-    const result = validateStory({ title: "Test" }, defaultOpts);
+    const result = validateStory(
+      { title: "Test", viralTitle: "Viral", description: "Desc" },
+      defaultOpts
+    );
     expect(result.valid).toBe(false);
     expect(result.errors).toContainEqual(expect.stringMatching(/scenes/));
   });
