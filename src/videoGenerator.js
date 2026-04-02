@@ -56,7 +56,7 @@ export async function generateVideos(config, story, imagePaths, runway) {
       const task = await runway.imageToVideo.create({
         model: config.RUNWAY_MODEL,
         promptImage: imageDataUri,
-        promptText: scene.prompt,
+        promptText: scene.prompt.slice(0, 1000),
         duration: scene.duration,
         ratio: config.VIDEO_RATIO,
       });

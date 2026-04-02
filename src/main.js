@@ -16,10 +16,14 @@ import { runPipeline } from "./pipeline.js";
 
 async function main() {
   const isProduction = process.argv.includes("--production");
+  const reuseStory = process.argv.includes("--reuse-story");
+  const reuseImages = process.argv.includes("--reuse-images");
 
   const config = loadConfig({
     MOCK_MODE: !isProduction,
     PRODUCTION_MODE: isProduction,
+    REUSE_STORY: reuseStory,
+    REUSE_IMAGES: reuseImages,
   });
 
   const deps = {};

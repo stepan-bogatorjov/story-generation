@@ -1,25 +1,19 @@
 /**
  * imageGenerator.js
  *
- * Generates scene images using the OpenAI images.edit API.
- * The reference character image (input/reference.jpg) is passed as the
- * input image with input_fidelity="high" so the model preserves the
- * character's face, clothing, beard, and equipment across all scenes.
+ * Generates scene images using the OpenAI gpt-image-1 model.
+ * The reference character image is passed alongside the scene prompt
+ * so the model preserves the character's appearance across all scenes.
  *
  * In MOCK_MODE the mock/image.png file is copied for every scene instead.
  */
 
 import fs from "fs/promises";
-import { createReadStream } from "fs";
 import path from "path";
+import { toFile } from "openai";
 
 /**
  * Generates images for every scene in the story.
- *
- * Uses images.edit (not images.generate) so we can supply the reference
- * image as input. Setting input_fidelity to "high" tells the model to
- * preserve distinctive features — face, clothing, gear — from the
- * reference across every generated scene.
  *
  * @param {object}   config   - Pipeline configuration.
  * @param {object}   story    - Validated story object (title + scenes[]).
@@ -30,6 +24,19 @@ export async function generateImages(config, story, openai) {
   console.log("[image] Step started: generating images...");
 
   const imagePaths = [];
+
+  if (config.REUSE_IMAGES) {
+    console.log("[image] REUSE_IMAGES — using existing scene images");
+    for (const scene of story.scenes) {
+      const sceneDir = path.join(
+        config.SCENES_DIR,
+        `scene-${String(scene.scene).padStart(2, "0")}`
+      );
+      imagePaths.push(path.join(sceneDir, "image.png"));
+    }
+    console.log("[image] Step completed.");
+    return imagePaths;
+  }
 
   for (const scene of story.scenes) {
     const sceneDir = path.join(
@@ -46,24 +53,25 @@ export async function generateImages(config, story, openai) {
       );
       await fs.copyFile(config.MOCK_IMAGE_PATH, outputPath);
     } else {
-      // -- Production path: call OpenAI images.edit -------------------------
+      // -- Production path: call OpenAI images.generate ---------------------
       if (!openai) {
         throw new Error("OpenAI client is required when MOCK_MODE is false");
       }
 
       console.log(`[image] Generating image for scene ${scene.scene}...`);
 
-      // Pass the reference image as the input so the model keeps the
-      // character's appearance consistent. input_fidelity="high" preserves
-      // facial features, clothing, and other distinctive details.
       const response = await openai.images.edit({
         model: config.OPENAI_IMAGE_MODEL,
-        image: createReadStream(config.REFERENCE_IMAGE_PATH),
+        image: [
+          await toFile(
+            await fs.readFile(config.REFERENCE_IMAGE_PATH),
+            "reference.jpg",
+            { type: "image/jpeg" }
+          ),
+        ],
         prompt: scene.prompt,
         n: 1,
         size: "1536x1024",
-        input_fidelity: "high",
-        quality: "high",
       });
 
       // The API returns base64-encoded image data.

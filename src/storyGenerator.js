@@ -104,7 +104,13 @@ export async function generateStory(config, openai) {
 
   let story;
 
-  if (config.MOCK_MODE) {
+  if (config.REUSE_STORY) {
+    // -- Reuse path: load previously generated story from output -------------
+    const reusePath = `${config.OUTPUT_DIR}/story.json`;
+    console.log(`[story] REUSE_STORY — loading existing story from ${reusePath}`);
+    const raw = await fs.readFile(reusePath, "utf-8");
+    story = JSON.parse(raw);
+  } else if (config.MOCK_MODE) {
     // -- Mock path: read story from disk ------------------------------------
     console.log(`[story] MOCK_MODE — loading story from ${config.MOCK_STORY_PATH}`);
     const raw = await fs.readFile(config.MOCK_STORY_PATH, "utf-8");

@@ -25,6 +25,10 @@ export function loadConfig(overrides = {}) {
     MOCK_MODE: true,
     // PRODUCTION_MODE: must be explicitly true to allow real API calls.
     PRODUCTION_MODE: false,
+    // REUSE_STORY: when true, skip story generation and load existing output/story.json.
+    REUSE_STORY: false,
+    // REUSE_IMAGES: when true, skip image generation and use existing scene images.
+    REUSE_IMAGES: false,
 
     // -- Story settings ------------------------------------------------------
     // Scene count is determined dynamically by the LLM based on pacing.
@@ -35,7 +39,7 @@ export function loadConfig(overrides = {}) {
 
     // -- Model identifiers ---------------------------------------------------
     OPENAI_MODEL: "gpt-5.4",
-    OPENAI_IMAGE_MODEL: "gpt-image-1.5",
+    OPENAI_IMAGE_MODEL: "gpt-image-1",
     RUNWAY_MODEL: "gen4.5",
     VIDEO_RATIO: "720:1280",
 
