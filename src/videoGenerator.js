@@ -29,6 +29,12 @@ export async function generateVideos(config, story, imagePaths, runway) {
   }
 
   const tasks = story.scenes.map(async (scene, i) => {
+    // Skip scenes where image generation failed.
+    if (!imagePaths[i]) {
+      console.warn(`[video] Skipping scene ${scene.scene} — no image available`);
+      return null;
+    }
+
     const sceneDir = path.join(
       config.SCENES_DIR,
       `scene-${String(scene.scene).padStart(2, "0")}`
@@ -81,7 +87,24 @@ export async function generateVideos(config, story, imagePaths, runway) {
     return outputPath;
   });
 
-  const videoPaths = await Promise.all(tasks);
+  const results = await Promise.allSettled(tasks);
+  const videoPaths = [];
+  const failed = [];
+
+  results.forEach((result, i) => {
+    if (result.status === "fulfilled") {
+      videoPaths.push(result.value);
+    } else {
+      const sceneNum = story.scenes[i].scene;
+      console.error(`[video] Scene ${sceneNum} FAILED: ${result.reason.message}`);
+      failed.push(sceneNum);
+      videoPaths.push(null);
+    }
+  });
+
+  if (failed.length > 0) {
+    console.warn(`[video] ${failed.length} scene(s) failed: ${failed.join(", ")}`);
+  }
 
   console.log("[video] Step completed.");
   return videoPaths;

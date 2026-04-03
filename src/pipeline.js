@@ -10,6 +10,7 @@
  * The pipeline respects MOCK_MODE / PRODUCTION_MODE flags from config.
  */
 
+import fs from "fs/promises";
 import path from "path";
 import { createWriteStream } from "fs";
 import archiver from "archiver";
@@ -38,6 +39,13 @@ export async function runPipeline(config, deps = {}) {
       "PRODUCTION_MODE must be true to make real API calls. " +
         "Set MOCK_MODE=true for development or PRODUCTION_MODE=true for production."
     );
+  }
+
+  // Clean up old scenes to prevent stale data from previous runs
+  // (skip when reusing images, as we need them).
+  if (!config.REUSE_IMAGES) {
+    await fs.rm(config.SCENES_DIR, { recursive: true, force: true });
+    console.log("[cleanup] Removed old scenes directory");
   }
 
   // Step 1 — Story generation

@@ -83,7 +83,24 @@ export async function generateImages(config, story, openai) {
     return outputPath;
   });
 
-  const imagePaths = await Promise.all(tasks);
+  const results = await Promise.allSettled(tasks);
+  const imagePaths = [];
+  const failed = [];
+
+  results.forEach((result, i) => {
+    if (result.status === "fulfilled") {
+      imagePaths.push(result.value);
+    } else {
+      const sceneNum = story.scenes[i].scene;
+      console.error(`[image] Scene ${sceneNum} FAILED: ${result.reason.message}`);
+      failed.push(sceneNum);
+      imagePaths.push(null);
+    }
+  });
+
+  if (failed.length > 0) {
+    console.warn(`[image] ${failed.length} scene(s) failed: ${failed.join(", ")}`);
+  }
 
   console.log("[image] Step completed.");
   return imagePaths;
