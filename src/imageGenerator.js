@@ -5,6 +5,7 @@
  * The reference character image is passed alongside the scene prompt
  * so the model preserves the character's appearance across all scenes.
  *
+ * All scenes are generated in parallel for faster throughput.
  * In MOCK_MODE the mock/image.png file is copied for every scene instead.
  */
 
@@ -13,7 +14,7 @@ import path from "path";
 import { toFile } from "openai";
 
 /**
- * Generates images for every scene in the story.
+ * Generates images for every scene in the story (in parallel).
  *
  * @param {object}   config   - Pipeline configuration.
  * @param {object}   story    - Validated story object (title + scenes[]).
@@ -23,22 +24,33 @@ import { toFile } from "openai";
 export async function generateImages(config, story, openai) {
   console.log("[image] Step started: generating images...");
 
-  const imagePaths = [];
-
   if (config.REUSE_IMAGES) {
     console.log("[image] REUSE_IMAGES — using existing scene images");
-    for (const scene of story.scenes) {
-      const sceneDir = path.join(
+    const imagePaths = story.scenes.map((scene) =>
+      path.join(
         config.SCENES_DIR,
-        `scene-${String(scene.scene).padStart(2, "0")}`
-      );
-      imagePaths.push(path.join(sceneDir, "image.png"));
-    }
+        `scene-${String(scene.scene).padStart(2, "0")}`,
+        "image.png"
+      )
+    );
     console.log("[image] Step completed.");
     return imagePaths;
   }
 
-  for (const scene of story.scenes) {
+  // Load reference image once for all scenes.
+  let referenceFile;
+  if (!config.MOCK_MODE) {
+    if (!openai) {
+      throw new Error("OpenAI client is required when MOCK_MODE is false");
+    }
+    referenceFile = await toFile(
+      await fs.readFile(config.REFERENCE_IMAGE_PATH),
+      "reference.jpg",
+      { type: "image/jpeg" }
+    );
+  }
+
+  const tasks = story.scenes.map(async (scene) => {
     const sceneDir = path.join(
       config.SCENES_DIR,
       `scene-${String(scene.scene).padStart(2, "0")}`
@@ -47,42 +59,31 @@ export async function generateImages(config, story, openai) {
     const outputPath = path.join(sceneDir, "image.png");
 
     if (config.MOCK_MODE) {
-      // -- Mock path: copy static image -------------------------------------
       console.log(
         `[image] MOCK_MODE — copying mock image for scene ${scene.scene}`
       );
       await fs.copyFile(config.MOCK_IMAGE_PATH, outputPath);
     } else {
-      // -- Production path: call OpenAI images.generate ---------------------
-      if (!openai) {
-        throw new Error("OpenAI client is required when MOCK_MODE is false");
-      }
-
       console.log(`[image] Generating image for scene ${scene.scene}...`);
 
       const response = await openai.images.edit({
         model: config.OPENAI_IMAGE_MODEL,
-        image: [
-          await toFile(
-            await fs.readFile(config.REFERENCE_IMAGE_PATH),
-            "reference.jpg",
-            { type: "image/jpeg" }
-          ),
-        ],
+        image: [referenceFile],
         prompt: scene.prompt,
         n: 1,
         size: "1536x1024",
       });
 
-      // The API returns base64-encoded image data.
       const base64Data = response.data[0].b64_json;
       const imageBuffer = Buffer.from(base64Data, "base64");
       await fs.writeFile(outputPath, imageBuffer);
     }
 
     console.log(`[image] Scene ${scene.scene} image saved to ${outputPath}`);
-    imagePaths.push(outputPath);
-  }
+    return outputPath;
+  });
+
+  const imagePaths = await Promise.all(tasks);
 
   console.log("[image] Step completed.");
   return imagePaths;

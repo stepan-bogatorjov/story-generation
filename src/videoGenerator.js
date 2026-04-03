@@ -5,6 +5,7 @@
  * Each video is created from the corresponding scene image that was
  * generated in the previous pipeline step, ensuring visual continuity.
  *
+ * All scenes are generated in parallel for faster throughput.
  * In MOCK_MODE the mock/video.mp4 file is copied for every scene instead.
  */
 
@@ -12,7 +13,7 @@ import fs from "fs/promises";
 import path from "path";
 
 /**
- * Generates videos for every scene in the story.
+ * Generates videos for every scene in the story (in parallel).
  *
  * @param {object}   config     - Pipeline configuration.
  * @param {object}   story      - Validated story object.
@@ -23,10 +24,11 @@ import path from "path";
 export async function generateVideos(config, story, imagePaths, runway) {
   console.log("[video] Step started: generating videos...");
 
-  const videoPaths = [];
+  if (!config.MOCK_MODE && !runway) {
+    throw new Error("Runway client is required when MOCK_MODE is false");
+  }
 
-  for (let i = 0; i < story.scenes.length; i++) {
-    const scene = story.scenes[i];
+  const tasks = story.scenes.map(async (scene, i) => {
     const sceneDir = path.join(
       config.SCENES_DIR,
       `scene-${String(scene.scene).padStart(2, "0")}`
@@ -35,17 +37,11 @@ export async function generateVideos(config, story, imagePaths, runway) {
     const outputPath = path.join(sceneDir, "video.mp4");
 
     if (config.MOCK_MODE) {
-      // -- Mock path: copy static video -------------------------------------
       console.log(
         `[video] MOCK_MODE — copying mock video for scene ${scene.scene}`
       );
       await fs.copyFile(config.MOCK_VIDEO_PATH, outputPath);
     } else {
-      // -- Production path: call Runway image-to-video ----------------------
-      if (!runway) {
-        throw new Error("Runway client is required when MOCK_MODE is false");
-      }
-
       console.log(`[video] Generating video for scene ${scene.scene}...`);
 
       // Read the previously generated scene image as base64 data URI.
@@ -82,8 +78,10 @@ export async function generateVideos(config, story, imagePaths, runway) {
     }
 
     console.log(`[video] Scene ${scene.scene} video saved to ${outputPath}`);
-    videoPaths.push(outputPath);
-  }
+    return outputPath;
+  });
+
+  const videoPaths = await Promise.all(tasks);
 
   console.log("[video] Step completed.");
   return videoPaths;

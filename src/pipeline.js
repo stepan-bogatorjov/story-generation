@@ -10,6 +10,9 @@
  * The pipeline respects MOCK_MODE / PRODUCTION_MODE flags from config.
  */
 
+import path from "path";
+import { createWriteStream } from "fs";
+import archiver from "archiver";
 import { generateStory } from "./storyGenerator.js";
 import { generateImages } from "./imageGenerator.js";
 import { generateVideos } from "./videoGenerator.js";
@@ -46,7 +49,43 @@ export async function runPipeline(config, deps = {}) {
   // Step 3 — Video generation
   const videoPaths = await generateVideos(config, story, imagePaths, deps.runway);
 
+  // Step 4 — Archive output
+  const archivePath = await archiveOutput(config);
+
   console.log("=== Pipeline completed ===");
 
-  return { story, imagePaths, videoPaths };
+  return { story, imagePaths, videoPaths, archivePath };
+}
+
+/**
+ * Packs the entire output directory into a timestamped zip archive.
+ *
+ * @param {object} config - Pipeline configuration.
+ * @returns {Promise<string>} Path to the created zip file.
+ */
+function archiveOutput(config) {
+  return new Promise((resolve, reject) => {
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+    const zipName = `story-${timestamp}.zip`;
+    const zipPath = path.join(config.OUTPUT_DIR, zipName);
+
+    console.log(`[archive] Packing output to ${zipPath}...`);
+
+    const output = createWriteStream(zipPath);
+    const archive = archiver("zip", { zlib: { level: 9 } });
+
+    output.on("close", () => {
+      console.log(`[archive] Archive created (${(archive.pointer() / 1024 / 1024).toFixed(1)} MB)`);
+      resolve(zipPath);
+    });
+
+    archive.on("error", reject);
+    archive.pipe(output);
+
+    // Add story.json and scenes/, but exclude any existing zip archives.
+    archive.file(path.join(config.OUTPUT_DIR, "story.json"), { name: "story.json" });
+    archive.directory(path.join(config.OUTPUT_DIR, "scenes"), "scenes");
+
+    archive.finalize();
+  });
 }
